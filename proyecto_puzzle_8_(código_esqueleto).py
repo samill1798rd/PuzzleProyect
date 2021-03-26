@@ -195,13 +195,30 @@ def writeOutput():
     (Los estudiantes deben cambiar el método para que opere con los parametros necesarios).
     """
 
-    ### SU CÓDIGO VA AQUÍ ###
-
 def bfs_search(initial_state):
 
-    """BFS search"""
+    global Max, Node, MaxSearch
 
-    ### SU CÓDIGO VA AQUÍ ###
+    visited = set()
+    Queue = deque([PuzzleState(initial_state, None, None, 0, 0, 0)])
+
+    while Queue:
+        node = Queue.popleft()
+        visited.add(node.map)
+        if node.state == State:
+            Node = node
+            return Queue
+        paths = subNodes(node)
+        for path in paths:
+            if path.map not in visited:
+                Queue.append(path)
+                visited.add(path.map)
+                if path.depth > MaxSearch:
+                    MaxSearch = MaxSearch + 1
+        if len(Queue) > Max:
+            QueueSize = len(Queue)
+            Max = QueueSize
+
 
 def dfs_search(initial_state):
 
