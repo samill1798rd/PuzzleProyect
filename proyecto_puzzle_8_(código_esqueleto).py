@@ -27,9 +27,10 @@ import queue as Q
 
 import time
 
-import resource
+import math 
 
-import math
+import dist
+import distutils
 
 # Clase que representa el Puzzle-n general
 
@@ -214,17 +215,20 @@ def A_star_search(initial_state):
 
     ### SU CÓDIGO VA AQUÍ ###
 
-def calculate_total_cost(state):
+def calculate_total_cost(self,costo):
+    global operacionCosto
+    self.costo = costo
+    operacionCosto =+ costo 
+    return operacionCosto
 
-    """calculate the total estimated cost of a state"""
 
-    ### SU CÓDIGO VA AQUÍ ###
+def calculate_manhattan_dist(punto1, punto2):
+    total = 0
+    for i in range(len(punto1)):
+        operacion = punto1[i] - punto2[i]
+        total = total + abs(operacion)
+    return total
 
-def calculate_manhattan_dist(idx, value, n):
-
-    """calculate the manhattan distance of a tile"""
-
-    ### SU CÓDIGO VA AQUÍ ###
 
 def test_goal(puzzle_state):
 
