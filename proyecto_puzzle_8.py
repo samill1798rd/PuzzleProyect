@@ -209,20 +209,16 @@ class PuzzleState(object):
 
         return self.children
 '''
-def subNodes(node):
-
-    global NodesExpanded
-    NodesExpanded = NodesExpanded+1
-
-    nextPaths = []
-    nextPaths.append(PuzzleState(move(node.state, 1), node, 1, node.depth + 1, node.cost + 1, 0))
-    nextPaths.append(PuzzleState(move(node.state, 2), node, 2, node.depth + 1, node.cost + 1, 0))
-    nextPaths.append(PuzzleState(move(node.state, 3), node, 3, node.depth + 1, node.cost + 1, 0))
-    nextPaths.append(PuzzleState(move(node.state, 4), node, 4, node.depth + 1, node.cost + 1, 0))
+def Nodes(node):
+    nextPath = []
+    nextPath.append(PuzzleState(move(node.state, 1), node, 1, node.depth + 1, node.cost + 1, 0))
+    nextPath.append(PuzzleState(move(node.state, 2), node, 2, node.depth + 1, node.cost + 1, 0))
+    nextPath.append(PuzzleState(move(node.state, 3), node, 3, node.depth + 1, node.cost + 1, 0))
+    nextPath.append(PuzzleState(move(node.state, 4), node, 4, node.depth + 1, node.cost + 1, 0))
     nodes=[]
-    for procPaths in nextPaths:
-        if(procPaths.state!=None):
-            nodes.append(procPaths)
+    for procPath in nextPath:
+        if(procPath.state!=None):
+            nodes.append(procPath)
     return nodes
 
 def move(state, direction):    
@@ -421,7 +417,7 @@ class CustomQueue():
 
     def insert(self, data):
         self.queue.append(data)
-        self.queue.sort( key=lambda x: x.n)
+        self.queue.sort( key=lambda x: x.key)
     
     def remove(self):
         return self.queue.pop(0)
@@ -434,64 +430,56 @@ class CustomQueue():
 
 def A_star_search(initial_state):
     """A * search"""
-    start = timeit.default_timer()
     output = templateOutput
-    boardVisited= set()
+    visited= set()
     Queue = CustomQueue()
-    MaxFrontier = 0
-    MaxSearchDeep = 0 
     
-    #transform initial state to calculate Heuritic
     nstr = "".join(  initial_state.__str__() ).replace(',', '').replace(' ', '').replace('[', '').replace(']','')
-    print(node1, " ", nstr, type(nstr))
-    #calculate Heuristic and set initial node
-    key = Heuristic(nstr)
 
-    Queue.insert(PuzzleState(initial_state))
-    print(key)
-    '''
-    initial_state.n = key
-    Queue.append(initial_state) 
-    boardVisited.add(initial_state)
-    
+    key = Heuristica(nstr)
+
+    Queue.insert(PuzzleState(initial_state, None, None, 0, 0, key))
+    visited.add(nstr)
     while Queue:
-        Queue.sort(key=lambda o: o.n) 
-        node = Queue.pop(0)
-        if test_goal(node.config):
-            #GoalNode = node
-            print("Confirmado OK")
+        track = Queue.remove()
+        if test_goal(track.state):
+            writeOutput( translatePath( track, initial_state, output ))
+            print("Termino")
             return Queue
-        posiblePaths = initial_state.expand()
-        for path in posiblePaths:      
-            thisPath = str(path.config)
-            if thisPath not in boardVisited:
-                key = Heuristic(str(path.config))
+        posiblesPath = Nodes(track)
+        output["nodes_expanded"] += 1
+        for path in posiblesPath:      
+            onePath = path.map[:]
+            if onePath not in visited:
+                key = Heuristica(path.map)
                 path.key = key + path.depth
-                Queue.append(path)               
-                boardVisited.add(path.map[:])
-                if path.cost > MaxSearchDeep:
-                    MaxSearchDeep += 1
-    output["max_search_depth"] = MaxSearchDeep'''
-    
-    stop = timeit.default_timer()
-    time = stop-start
-    writeOutput(output)
+                Queue.insert(path)
+                visited.add(path.map[:])
+                if path.cost > output["max_search_depth"]:
+                    output["max_search_depth"] += 1
 
-def Heuristic(node):
+def translatePath(node, initial_state, output):
+    output["search_depth"] = node.depth
+    while initial_state != node.state:
+        if node.move == 1:
+            path = 'Up'
+        if node.move == 2:
+            path = 'Down'
+        if node.move == 3:
+            path = 'Left'
+        if node.move == 4:
+            path = 'Right'
+        output["path_to_goal"].insert(0, path)
+        node = node.parent
+    output["cost_of_path"] = len(output["path_to_goal"])
+    return output
+
+def Heuristica(node):
     prov = [ [0,1,2,1,2,3,2,3,4], [1,0,1,2,1,2,3,2,3], [2,1,0,3,2,1,4,3,2], 
     [1,2,3,0,1,2,1,2,3], [2,1,2,1,0,1,2,1,2], [3,2,1,2,1,0,3,2,1],
     [2,3,4,1,2,3,0,1,2], [3,2,3,2,1,2,1,0,1], [4,3,2,3,2,1,2,1,0]]
   
-    v0=prov[0][node.index("0")]
-    v1=prov[1][node.index("1")]
-    v2=prov[2][node.index("2")]
-    v3=prov[3][node.index("3")]
-    v4=prov[4][node.index("4")]
-    v5=prov[5][node.index("5")]
-    v6=prov[6][node.index("6")]
-    v7=prov[7][node.index("7")]
-    v8=prov[8][node.index("8")]
-    return v0+v1+v2+v3+v4+v5+v6+v7+v8
+    return prov[0][node.index("0")] + prov[1][node.index("1")] + prov[2][node.index("2")] + prov[3][node.index("3")] + prov[4][node.index("4")] + prov[5][node.index("5")] + prov[6][node.index("6")] + prov[7][node.index("7")] + prov[8][node.index("8")] 
     ### CÓDIGO TERMINA AQUÍ ###
 
 def calculate_total_cost(self,costo):
@@ -533,11 +521,11 @@ def main():
 
     begin_state = query[1].split(",")
 
-    begin_state = list(map(int, begin_state))
+    hard_state = list(map(int, begin_state))
 
-    size = int(math.sqrt(len(begin_state)))
+    #size = int(math.sqrt(len(begin_state)))
 
-    hard_state = PuzzleState(begin_state, size)
+    #hard_state = PuzzleState(begin_state, size)
 
     if sm == "bfs":
 
@@ -549,7 +537,7 @@ def main():
 
     elif sm == "ast":
 
-        A_star_search(begin_state)
+        A_star_search(hard_state)
 
     else:
 
