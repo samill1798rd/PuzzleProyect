@@ -423,10 +423,26 @@ def bfs_search(initial_state):
 
 def dfs_search(initial_state):
 
-    """DFS search"""
-
-    ### SU CÓDIGO VA AQUÍ ###
-
+ global MaxFrontier, GoalNode, MaxSearchDeep
+    boardVisited = set()
+    stack = list([PuzzleState(initial_state, None, None, 0, 0, 0)])
+    while stack:
+        node = stack.pop()
+        boardVisited.add(node.map)
+        if node.state == GoalState:
+            GoalNode = node
+            return stack
+      
+        posiblePaths = reversed(subNodes(node))
+        for path in posiblePaths:
+            if path.map not in boardVisited:
+                stack.append(path)a
+                boardVisited.add(path.map)
+                if path.depth > MaxSearchDeep:
+                    MaxSearchDeep = 1 + MaxSearchDeep
+        if len(stack) > MaxFrontier:
+            MaxFrontier = len(stack)
+    
 class CustomQueue():
     def __init__(self):
         self.queue = []
