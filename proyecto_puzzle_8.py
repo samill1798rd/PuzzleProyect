@@ -209,6 +209,13 @@ class PuzzleState(object):
 
         return self.children
 '''
+# Global variables
+GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+GoalNode = None
+NodesExpanded = 0
+MaxSearchDeep = 0
+MaxFrontier = 0
+
 def Nodes(node):
     nextPath = []
     nextPath.append(PuzzleState(move(node.state, 1), node, 1, node.depth + 1, node.cost + 1, 0))
@@ -219,6 +226,20 @@ def Nodes(node):
     for procPath in nextPath:
         if(procPath.state!=None):
             nodes.append(procPath)
+    return nodes
+
+def subNodes(node):
+    global NodesExpanded
+    NodesExpanded = NodesExpanded+1
+    nextPaths = []
+    nextPaths.append(PuzzleState(move(node.state, 1), node, 1, node.depth + 1, node.cost + 1, 0))
+    nextPaths.append(PuzzleState(move(node.state, 2), node, 2, node.depth + 1, node.cost + 1, 0))
+    nextPaths.append(PuzzleState(move(node.state, 3), node, 3, node.depth + 1, node.cost + 1, 0))
+    nextPaths.append(PuzzleState(move(node.state, 4), node, 4, node.depth + 1, node.cost + 1, 0))
+    nodes=[]
+    for procPaths in nextPaths:
+        if(procPaths.state!=None):
+            nodes.append(procPaths)
     return nodes
 
 def move(state, direction):    
@@ -380,30 +401,25 @@ def writeOutput(data):
     print(data)
 
 def bfs_search(initial_state):
-    return 
-'''
-    global Max, Node, MaxSearch
-
-    visited = set()
+    global MaxFrontier, GoalNode, MaxSearchDeep
+    boardVisited= set()
     Queue = deque([PuzzleState(initial_state, None, None, 0, 0, 0)])
-
     while Queue:
         node = Queue.popleft()
-        visited.add(node.map)
-        if node.state == State:
-            Node = node
+        boardVisited.add(node.map)
+        if node.state == GoalState:
+            GoalNode = node
             return Queue
-        paths = subNodes(node)
-        for path in paths:
-            if path.map not in visited:
+        posiblePaths = subNodes(node)
+        for path in posiblePaths:
+            if path.map not in boardVisited:
                 Queue.append(path)
-                visited.add(path.map)
-                if path.depth > MaxSearch:
-                    MaxSearch = MaxSearch + 1
-        if len(Queue) > Max:
+                boardVisited.add(path.map)
+                if path.depth > MaxSearchDeep:
+                    MaxSearchDeep = MaxSearchDeep + 1
+        if len(Queue) > MaxFrontier:
             QueueSize = len(Queue)
-            Max = QueueSize
-''' 
+            MaxFrontier = QueueSize
 
 def dfs_search(initial_state):
 
