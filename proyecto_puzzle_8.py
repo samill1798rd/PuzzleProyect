@@ -531,8 +531,23 @@ def calculate_manhattan_dist(punto1, punto2):
 
 def test_goal(puzzle_state):
     """test the state is the goal state or not"""
-    return puzzle_state == [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    ### SU CÓDIGO VA AQUÍ ###
+    global GoalNode
+    parser = argparse.ArgumentParser()
+    parser.add_argument('method')
+    parser.add_argument('initialBoard')
+    args = parser.parse_args()
+    data = args.initialBoard.split(",")
+
+    InitialState = []
+    InitialState.append(int(data[0]))
+    InitialState.append(int(data[1]))
+    InitialState.append(int(data[2]))
+    InitialState.append(int(data[3]))
+    InitialState.append(int(data[4]))
+    InitialState.append(int(data[5]))
+    InitialState.append(int(data[6]))
+    InitialState.append(int(data[7]))
+    InitialState.append(int(data[8]))
 
 global templateOutput
 templateOutput = {
