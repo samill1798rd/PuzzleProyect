@@ -29,7 +29,7 @@ MaxFrontier = 0
 
 
 def bfs_search(initial_state):
-    'CODE'
+    'CODE MARIANNE'
     global MaxFrontier, GoalNode, MaxSearchDeep
 
     boardVisited = set()
