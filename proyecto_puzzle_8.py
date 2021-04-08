@@ -224,7 +224,73 @@ def move(state, direction):
         return newState
     
 def main():
-    'CODE'
+    global GoalNode
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('method')
+    parser.add_argument('initialBoard')
+    args = parser.parse_args()
+    data = args.initialBoard.split(",")
+
+    #Build initial board state
+    InitialState = []
+    InitialState.append(int(data[0]))
+    InitialState.append(int(data[1]))
+    InitialState.append(int(data[2]))
+    InitialState.append(int(data[3]))
+    InitialState.append(int(data[4]))
+    InitialState.append(int(data[5]))
+    InitialState.append(int(data[6]))
+    InitialState.append(int(data[7]))
+    InitialState.append(int(data[8]))
+
+    #Start operation
+    start = timeit.default_timer()
+
+    function = args.method
+    if(function=="bfs"):
+        bfs_search(InitialState)
+    if(function=="dfs"):
+        dfs_search(InitialState)  
+    if(function=="ast"):
+        ast_search(InitialState) 
+
+    stop = timeit.default_timer()
+    time = stop-start
+
+    #Save total path result
+    deep=GoalNode.depth
+    moves = []
+    while InitialState != GoalNode.state:
+        if GoalNode.move == 1:
+            path = 'Up'
+        if GoalNode.move == 2:
+            path = 'Down'
+        if GoalNode.move == 3:
+            path = 'Left'
+        if GoalNode.move == 4:
+            path = 'Right'
+        moves.insert(0, path)
+        GoalNode = GoalNode.parent
+    
+    #Print results
+    print("path: ",moves)
+    print("cost: ",len(moves))
+    print("nodes expanded: ", str(NodesExpanded))
+    print("search_depth: ", str(deep))
+    print("MaxSearchDeep: ", str(MaxSearchDeep))
+    print("running_time: ", format(time, '.8f'))
+
+    #Generate output document for grade system
+         
+    file = open('output.txt', 'w')
+    file.write("path_to_goal: " + str(moves) + "\n")
+    file.write("cost_of_path: " + str(len(moves)) + "\n")
+    file.write("nodes_expanded: " + str(NodesExpanded) + "\n")
+    file.write("search_depth: " + str(deep) + "\n")
+    file.write("max_search_depth: " + str(MaxSearchDeep) + "\n")
+    file.write("running_time: " + format(time, '.8f') + "\n")
+    file.close()
 
 if __name__ == '__main__':
     main()
