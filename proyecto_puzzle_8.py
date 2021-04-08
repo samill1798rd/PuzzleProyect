@@ -53,10 +53,59 @@ def bfs_search(initial_state):
             MaxFrontier = QueueSize
 
 def dfs_search(initial_state):
-    'CODE'
+    'CODE EMILIO'
+    global MaxFrontier, GoalNode, MaxSearchDeep
+
+    boardVisited = set()
+    stack = list([PuzzleState(initial_state, None, None, 0, 0, 0)])
+    while stack:
+        node = stack.pop()
+        boardVisited.add(node.map)
+        if node.state == GoalState:
+            GoalNode = node
+            return stack
+
+        posiblePaths = reversed(subNodes(node))
+        for path in posiblePaths:
+            if path.map not in boardVisited:
+                stack.append(path)
+                boardVisited.add(path.map)
+                if path.depth > MaxSearchDeep:
+                    MaxSearchDeep = 1 + MaxSearchDeep
+        if len(stack) > MaxFrontier:
+            MaxFrontier = len(stack)
 
 def ast_search(initial_state):
-    'CODE'
+    'CODE SANTIAGO'
+    global MaxFrontier, MaxSearchDeep, GoalNode
+
+    node1 = ""
+    for poss in initial_state:
+        node1 = node1 + str(poss)
+
+    key = Heuristic(node1)
+    boardVisited = set()
+    Queue = []
+    Queue.append(PuzzleState(initial_state, None, None, 0, 0, key))
+    boardVisited.add(node1)
+
+    while Queue:
+        Queue.sort(key=lambda o: o.key)
+        node = Queue.pop(0)
+        if node.state == GoalState:
+            GoalNode = node
+            return Queue
+        posiblePaths = subNodes(node)
+        for path in posiblePaths:
+            thisPath = path.map[:]
+            if thisPath not in boardVisited:
+                key = Heuristic(path.map)
+                path.key = key + path.depth
+                Queue.append(path)
+                boardVisited.add(path.map[:])
+                if path.depth > MaxSearchDeep:
+                    MaxSearchDeep = 1 + MaxSearchDeep
+
         
 #Heuristic: distance to root numbers
 values_0 = [0,1,2,1,2,3,2,3,4]
