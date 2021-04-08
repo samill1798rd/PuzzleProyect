@@ -314,7 +314,7 @@ def main():
     InitialState.append(int(data[7]))
     InitialState.append(int(data[8]))
 
-    #Start operation
+    #comenzar operacion
     start = timeit.default_timer()
 
     function = args.method
@@ -328,7 +328,7 @@ def main():
     stop = timeit.default_timer()
     time = stop-start
 
-    #Save total path result
+    #guardar total path result
     deep=GoalNode.depth
     moves = []
     while InitialState != GoalNode.state:
@@ -343,7 +343,7 @@ def main():
         moves.insert(0, path)
         GoalNode = GoalNode.parent
     
-    #Print results
+    #imprimir
     print("path: ",moves)
     print("cost: ",len(moves))
     print("nodes expanded: ", str(NodesExpanded))
@@ -351,7 +351,7 @@ def main():
     print("MaxSearchDeep: ", str(MaxSearchDeep))
     print("running_time: ", format(time, '.8f'))
 
-    #Generate output document for grade system
+    #Generar output
          
     file = open('output.txt', 'w')
     file.write("path_to_goal: " + str(moves) + "\n")
